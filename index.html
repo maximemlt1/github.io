@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brocante Sarthe - David Maillet</title>
+    <style>
+        :root {
+            --primary-color: #FF6B6B;
+            --secondary-color: #4ECDC4;
+            --accent-color: #FFE66D;
+            --dark-color: #292F36;
+            --light-color: #F7FFF7;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--dark-color);
+            position: relative;
+            min-height: 100vh;
+            background-color: var(--light-color);
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center;
+            background-size: cover;
+            opacity: 0.15;
+            z-index: -1;
+        }
+        
+        header {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.9), rgba(78, 205, 196, 0.9));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .contact-header {
+            background-color: rgba(41, 47, 54, 0.9);
+            color: white;
+            padding: 0.8rem;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            position: relative;
+        }
+        
+        .contact-header a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        nav {
+            background-color: white;
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            gap: 2rem;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        nav a:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        nav a.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .content-tab {
+            display: none;
+        }
+        
+        .content-tab.active {
+            display: block;
+        }
+        
+        .filters-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+            gap: 1rem;
+        }
+        
+        .categories-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .sort-options {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .category-tab, .sort-btn {
+            padding: 0.8rem 1.5rem;
+            background-color: white;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: none;
+            font-family: inherit;
+            font-size: inherit;
+        }
+        
+        .category-tab:hover, .category-tab.active,
+        .sort-btn:hover, .sort-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            background-color: rgba(247, 255, 247, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--secondary-color);
+            margin: 0.5rem auto;
+        }
+        
+        .annonces-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .annonce-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .annonce-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+        
+        .annonce-img {
+            height: 200px;
+            background-color: #eee;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .annonce-content {
+            padding: 1.5rem;
+        }
+        
+        .annonce-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+        
+        .annonce-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .annonce-description {
+            color: #666;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .annonce-contact {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .annonce-contact:hover {
+            background-color: #3ab9b1;
+        }
+        
+        .contact-section {
+            background-color: white;
+            padding: 3rem 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 3rem;
+        }
+        
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .contact-icon {
+            background-color: var(--accent-color);
+            color: var(--dark-color);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent-color);
+        }
+        
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+            }
+            
+            .filters-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .categories-tabs, .sort-options {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .contact-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="contact-header">
+        <span>Ventes dans la Sarthe - David Maillet</span>
+        <span>Contact: <a href="mailto:david.maillet@example.com">david.maillet@example.com</a> - 06 29 22 78 14</span>
+    </div>
+    
+    <header>
+        <div class="logo">Brocante Sarthe</div>
+        <div class="tagline">Vente d'objets et meubles entre particuliers</div>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="#" class="nav-tab active" data-tab="toutes">Toutes les annonces</a></li>
+            <li><a href="#" class="nav-tab" data-tab="meubles">Meubles</a></li>
+            <li><a href="#" class="nav-tab" data-tab="jouets">Jouets</a></li>
+            <li><a href="#" class="nav-tab" data-tab="enfant">Enfant</a></li>
+            <li><a href="#" class="nav-tab" data-tab="outillage">Outillage</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <!-- Onglet Toutes les annonces -->
+        <div id="toutes" class="content-tab active">
+            <div class="filters-container">
+                <div class="categories-tabs">
+                    <div class="category-tab active" data-category="all">Toutes catégories</div>
+                    <div class="category-tab" data-category="meubles">Meubles</div>
+                    <div class="category-tab" data-category="jouets">Jouets</div>
+                    <div class="category-tab" data-category="enfant">Enfant</div>
+                    <div class="category-tab" data-category="outillage">Outillage</div>
+                </div>
+                
+                <div class="sort-options">
+                    <span>Trier par prix :</span>
+                    <button class="sort-btn" data-sort="asc">Croissant</button>
+                    <button class="sort-btn" data-sort="desc">Décroissant</button>
+                </div>
+            </div>
+            
+            <h2 class="section-title">Toutes mes annonces</h2>
+            
+            <div class="annonces-grid" id="annonces-toutes">
+                <!-- Meuble 1 -->
+                <div class="annonce-card" data-category="meubles" data-price="350">
+                    <div class="annonce-img" style="background-image: url('https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="annonce-content">
+                        <h3 class="annonce-title">Armoire en chêne</h3>
+                        <div class="annonce-price">350 €</div>
+                        <p class="annonce-description">Armoire en chêne massif, 2 portes, 4 étagères. Excellent état.</p>
+                        <div class="annonce-contact">06 29 22 78 14</div>
+                    </div>
+                </div>
+                
+                <!-- Jouet 1 -->
+                <div class="annonce-card" data-category="jouets" data-price="75">
+                    <div class="annonce-img" style="background-image: url('https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="annonce-content">
+                        <h3 class="annonce-title">Lego Château</h3>
+                        <div class="annonce-price">75 €</div>
+                        <p class="annonce-description">Set Lego château médiéval complet avec figurines. Comme neuf.</p>
+                        <div class="annonce-contact">06 29 22 78 14</div>
+                    </div>
+                </div>
+                
+                <!-- Enfant 1 -->
+                <div class="annonce-card" data-category="enfant" data-price="120">
+                    <div class="annonce-img" style="background-image: url('https://images.unsplash.com/photo-1590845947676-fa2576f401d2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="annonce-content">
+                        <h3 class="annonce-title">Poussette double</h3>
+                        <div class="annonce-price">120 €</div>
+                        <p class="annonce-description">Poussette double en très bon état. Roues gonflables, housse lavable.</p>
+                        <div class="annonce-contact">06 29 22 78 14</div>
+                    </div>
+                </div>
+                
+                <!-- Outillage 1 -->
+                <div class="annonce-card" data-category="outillage" data-price="65">
+                    <div class="annonce-img" style="background-image: url('https://images.unsplash.com/photo-1585771724684-38269d6639fd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="annonce-content">
+                        <h3 class="annonce-title">Perceuse visseuse</h3>
+                        <div class="annonce-price">65 €</div>
+                        <p class="annonce-description">Perceuse-visseuse sans fil 18V avec 2 batteries. Peu utilisée.</p>
+                        <div class="annonce-contact">06 29 22 78 14</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Onglet Meubles -->
+        <div id="meubles" class="content-tab">
+            <div class="filters-container">
+                <div class="sort-options">
+                    <span>Trier par prix :</span>
+                    <button class="sort-btn" data-sort="asc">Croissant</button>
+                    <button class="sort-btn" data-sort="desc">Décroissant</button>
+                </div>
+            </div>
+            
+            <h2 class="section-title">Meubles en vente</h2>
+            
+            <div class="annonces-grid" id="annonces-meubles">
+                <!-- Meuble 1 -->
+                <div class="annonce-card" data-price="350">
+                    <div class="annonce-img" style="background-image: url('https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="annonce-content">
+                        <h3 class="annonce-title">Armoire en chêne</h3>
+                        <div class="annonce-price">350 €</div>
+                        <p class="annonce-description">Armoire en chêne massif, 2 portes, 4 étagères. Excellent état.</p>
+                        <div class="annonce-contact">06 29 22 78 14</div>
+                    </div>
+                </div>
+                
+                <!-- Meuble 2 -->
+                <div class="annonce-card" data-price="120">
+                    <div class="annonce-img" style="background-image: url('https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="annonce-content">
+                        <h3 class="annonce-title">Table basse</h3>
+                        <div class="annonce-price">120 €</div>
+                        <p class="annonce-description">Table basse en verre et métal. Design moderne, dimensions 80x80cm.</p>
+                        <div class="annonce-contact">06 29 22 78 14</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Onglet Jouets -->
+        <div id="jouets" class="content-tab">
+            <div class="filters-container">
+                <div class="sort-options">
+                    <span>Trier par prix :</span>
+                    <button class="sort-btn" data-sort="asc">Croissant</button>
+                    <button class="sort-btn" data-sort="desc">Décroissant</button>
+                </div>
+            </div>
+            
+            <h2 class="section-title">Jouets en vente</h2>
+            
+            <div class="annonces-grid" id="annonces-jouets">
+                <!-- Jouet 1 -->
+                <div class="annonce-card" data-price="75">
+                    <div class="annonce-img" style="background-image: url('https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="annonce-content">
+                        <h3 class="annonce-title">Lego Château</h3>
+                        <div class="annonce-price">75 €</div>
+                        <p class="annonce-description">Set Lego château médiéval complet avec figurines. Comme neuf.</p>
+                        <div class="annonce-contact">06 29 22 78 14</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Onglet Enfant -->
+        <div id="enfant" class="content-tab">
+            <div class="filters-container">
+                <div class="sort-options">
+                    <span>Trier par prix :</span>
+                    <button class="sort-btn" data-sort="asc">Croissant</button>
+                    <button class="sort-btn" data-sort="desc">Décroissant</button>
+                </div>
+            </div>
+            
+            <h2 class="section-title">Articles pour enfant</h2>
+            
+            <div class="annonces-grid" id="annonces-enfant">
+                <!-- Enfant 1 -->
+                <div class="annonce-card" data-price="120">
+                    <div class="annonce-img" style="background-image: url('https://images.unsplash.com/photo-1590845947676-fa2576f401d2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="annonce-content">
+                        <h3 class="annonce-title">Poussette double</h3>
+                        <div class="annonce-price">120 €</div>
+                        <p class="annonce-description">Poussette double en très bon état. Roues gonflables, housse lavable.</p>
+                        <div class="annonce-contact">06 29 22 78 14</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Onglet Outillage -->
+        <div id="outillage" class="content-tab">
+            <div class="filters-container">
+                <div class="sort-options">
+                    <span>Trier par prix :</span>
+                    <button class="sort-btn" data-sort="asc">Croissant</button>
+                    <button class="sort-btn" data-sort="desc">Décroissant</button>
+                </div>
+            </div>
+            
+            <h2 class="section-title">Outillage en vente</h2>
+            
+            <div class="annonces-grid" id="annonces-outillage">
+                <!-- Outillage 1 -->
+                <div class="annonce-card" data-price="65">
+                    <div class="annonce-img" style="background-image: url('https://images.unsplash.com/photo-1585771724684-38269d6639fd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');"></div>
+                    <div class="annonce-content">
+                        <h3 class="annonce-title">Perceuse visseuse</h3>
+                        <div class="annonce-price">65 €</div>
+                        <p class="annonce-description">Perceuse-visseuse sans fil 18V avec 2 batteries. Peu utilisée.</p>
+                        <div class="annonce-contact">06 29 22 78 14</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <section class="contact-section" id="contact">
+            <h2 class="section-title">Contact</h2>
+            
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="contact-icon">✉️</div>
+                    <div>
+                        <h3>Email</h3>
+                        <p>david.maillet@example.com</p>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">📱</div>
+                    <div>
+                        <h3>Téléphone</h3>
+                        <p>06 29 22 78 14</p>
+                    </div>
+                </div>
+                
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div>
+                        <h3>Localisation</h3>
+                        <p>Sarthe (72) - France</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <footer>
+        <div class="footer-links">
+            <a href="#" class="nav-tab" data-tab="toutes">Accueil</a>
+            <a href="#contact">Contact</a>
+        </div>
+        <p>© 2023 Brocante Sarthe - David Maillet</p>
+    </footer>
+
+    <script>
+        // Gestion des onglets de navigation
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const tabId = this.getAttribute('data-tab');
+                document.querySelectorAll('.content-tab').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Filtrage par catégorie
+        document.querySelectorAll('.category-tab').forEach(t
